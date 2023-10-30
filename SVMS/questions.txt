@@ -1,0 +1,4 @@
+1. kailangan ba ng webpage ng admin account?
+2. ano dapat ang nakikita ng admin? ano dapat nakalagay sa admin page?
+3. Di ba pwede yung phpmyadmin na lang yung gamiting admin account?
+4. 
