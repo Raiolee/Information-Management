@@ -2,5 +2,5 @@
 define('HOST_NAME', 'localhost');
 define('USER_NAME', 'root');
 define('PASSWORD', "");
-define('DB_NAME', 'finals');
+define('DB_NAME', 'vendocentral_db');
 ?>

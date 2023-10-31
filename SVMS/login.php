@@ -1,47 +1,63 @@
 <?php
 session_start();
-require 'config/connection.php';
+require_once 'config/connection.php';
 
 error_reporting(E_ERROR | E_PARSE);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $db_host = 'HOST_NAME';
-  $db_user = 'USER_NAME';
-  $db_password = 'PASSWORD';
-  $db_name = 'DB_NAME';
+if ((!isset($_SESSION['user']) != "") && (isset($_SESSION['type']) == "Admin")) {
+  header("Location: admin_dashboard.php");
+  exit;
+} elseif ((isset($_SESSION["user"]) != "") && (isset($_SESSION["type"]) == "Supplier")) {
+  header("Location: supplier_dashboard.php");
+  exit;
+}
 
-  $connection = mysqli_connect(HOST_NAME, USER_NAME, PASSWORD, DB_NAME);
+$error = false;
+if (isset($_POST['sign-in'])) {
+  $username = test_input($_POST['username']);
+  $password = test_input($_POST['password']);
+}
 
-  if (!$connection) {
-    die("Database connection failed: " . mysqli_connect_error());
-  }
+if (empty($email)) {
+  $error = true;
+  $emailError = "Please enter your email address.";
+} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+  $error = true;
+  $emailError = "Please enter a valid email addres.";
+}
 
-  $username = $_POST['username'];
-  $password = $_POST['password'];
+if (empty($password)) {
+  $error = true;
+  $passwordError = "Please enter your password.";
+}
 
-  $query = "SELECT * FROM accounts WHERE username = ?";
-  $stmt = $connection->prepare($query);
-  $stmt->bind_param('s', $username);
-  $stmt->execute();
-  $result = $stmt->get_result();
+if (!$error) {
+  $password = password_hash($password, PASSWORD_DEFAULT);
 
-  if ($result && mysqli_num_rows($result) == 1) {
-    $row = $result->fetch_assoc();
-    $storedHashedPassword = $row['password'];
+  $result = mysqli_query($connection, "SELECT user_id, user_email, user_pass, user_type FROM users WHERE user_email = '$email'");
+  $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
-    if (password_verify($password, $storedHashedPassword)) {
-      $_SESSION['username'] = $username;
-      $_SESSION['password'] = $storedHashedPassword;
-      header("Location: homepage.php");
-      exit;
-    } else {
-      $error = "Invalid username or password.";
-    }
+  $count = mysqli_num_rows($result); // if username/password is correct it returns must be 1 row
+
+  if ($count == 1 && $row["user_pass"] == $password && $row['user_type'] == 'admin') {
+    $_SESSION['user'] = $row['user_id'];
+    $_SESSION['type'] = $row['user_type'];
+    header('Location: admin_dashboard.php');
+  } elseif ($count == 1 && $row["user_pass"] == $password && $row['user_type'] == 'supplier') {
+    $_SESSION['user'] = $row['user_id'];
+    $_SESSION['type'] = $row['user_type'];
+    header('Location: supplier_dashboard.php');
   } else {
-    $error = "Invalid username or password.";
+    $errorMessage = "Incorrect Credentials, Try again";
   }
+}
 
-  mysqli_close($connection);
+function test_input($data)
+{
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
 }
 ?>
 
@@ -58,18 +74,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
 
-  <div class="container">
+  <div id="login-form" class="container">
     <div class="d-flex justify-content-center align-items-center">
-      <form action="homepage.php" method="POST" class="w-25">
+      <h3>Sign in.</h3>
+
+      <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" autocomplete="off" method="POST"
+        class="w-25">
+        <?php
+        if (isset($errorMessage)) {
+          ?>
+          <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <i class="bi flex-shrink-0 me-2 bi-exclamation-triangle" role="img" aria-label="Warning:"></i>
+            <div>
+              <?php echo $errorMessage; ?>
+            </div>
+          </div>
+
+          <?php
+        } ?>
+
         <div class="mt-5">
-          <label for="exampleFormControlInput1" class="form-label">Username</label>
-          <input type="text" name="username" class="form-control" id="exampleFormControlInput1">
+          <label for="exampleFormControlInput1" class="form-label"> Email </label>
+          <input type="email" name="email" class="form-control" id="exampleFormControlInput1" value="<?php echo $email; ?>">
         </div>
+        <span class="text-danger">
+          <?php echo $emailError ?>
+        </span>
         <div class="mb-3">
           <label for="exampleFormControlTextarea1" class="form-label">Password</label>
           <input type="password" name="password" class="form-control">
         </div>
-        <button type="submit" class="btn btn-primary" method="POST">Submit</button>
+        <span class="text-danger">
+          <?php echo $passError ?>
+        </span>
+        <button type="submit" class="btn btn-primary" name="login" method="POST">Submit</button>
       </form>
     </div>
 
@@ -81,7 +119,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
   </script>
   <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <?php include('includes/footer.html'); ?>
 </body>
 
 </html>
+<?php mysqli_close($connection); ?>
