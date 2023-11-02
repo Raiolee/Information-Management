@@ -13,15 +13,12 @@ if ((!isset($_SESSION['user']) != "") && (isset($_SESSION['type']) == "Admin")) 
 }
 
 $error = false;
-if (isset($_POST['sign-in'])) {
-  $username = test_input($_POST['username']);
+if (isset($_POST['login'])) {
+  $username = test_input($_POST['email']);
   $password = test_input($_POST['password']);
 }
 
-if (empty($email)) {
-  $error = true;
-  $emailError = "Please enter your email address.";
-} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
   $error = true;
   $emailError = "Please enter a valid email addres.";
 }
@@ -76,8 +73,6 @@ function test_input($data)
 
   <div id="login-form" class="container">
     <div class="d-flex justify-content-center align-items-center">
-      <h3>Sign in.</h3>
-
       <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" autocomplete="off" method="POST"
         class="w-25">
         <?php
@@ -92,10 +87,13 @@ function test_input($data)
 
           <?php
         } ?>
-
         <div class="mt-5">
+          <h3>Sign in.</h3>
+        </div>
+        <div class="mt-3">
           <label for="exampleFormControlInput1" class="form-label"> Email </label>
-          <input type="email" name="email" class="form-control" id="exampleFormControlInput1" value="<?php echo $email; ?>">
+          <input type="email" name="email" class="form-control" id="exampleFormControlInput1"
+            value="<?php echo $email; ?>">
         </div>
         <span class="text-danger">
           <?php echo $emailError ?>
@@ -105,9 +103,9 @@ function test_input($data)
           <input type="password" name="password" class="form-control">
         </div>
         <span class="text-danger">
-          <?php echo $passError ?>
+          <?php echo $passwordError ?>
         </span>
-        <button type="submit" class="btn btn-primary" name="login" method="POST">Submit</button>
+        <button type="submit" class="btn btn-primary" name="login">Submit</button>
       </form>
     </div>
 
