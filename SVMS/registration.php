@@ -2,10 +2,9 @@
 session_start();
 $page_title = "Register";
 require_once 'config/connection.php';
-error_reporting(E_ERROR | E_PARSE);
 
 $errors = array();
-$target = "images/";
+$target = "pictures/image";
 $targetFile = $target . basename($_FILES["image"]["name"]);
 $isOk = false;
 
@@ -26,7 +25,7 @@ if (isset($_POST['register'])) {
   $useremail = mysqli_real_escape_string($conn, $_POST['user_email']);
   $userpassword = mysqli_real_escape_string($conn, $_POST['user_pass']);
   $usertype = mysqli_real_escape_string($conn, $_POST['u_type']);
-  
+
   if (empty($fname) || empty($lname) || empty($usermobile) || empty($usermobile) || empty($userbday) || empty($useraddress) || empty($fname) || empty($email) || empty($username) || empty($password) || empty($confirm_pass) || empty($usertype)) {
     $errors['userType'] = "Fill in all the fields";
   }
@@ -63,6 +62,12 @@ if (isset($_POST['register'])) {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
 
   <?php include('includes/header2.html'); ?>
 </head>
@@ -70,7 +75,7 @@ if (isset($_POST['register'])) {
 <body>
   <div class="container">
     <div class="d-flex justify-content-center align-items-center my-4 ">
-      <form id="registration.php" class="w-25" method="POST">
+      <form id="registration" class="w-25" method="POST">
         <div class="mb-3">
           <label for="exampleFormControlTextarea1" class="form-label">First Name</label>
           <input type="text" name="fname" class="form-control">
@@ -84,23 +89,30 @@ if (isset($_POST['register'])) {
           <input type="text" name="usermobile" class="form-control">
         </div>
         <div class="mb-3">
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="usergender" value="Male">
-            <label class="form-check-label" for="inlineCheckbox1">Male</label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="usergender" value="Male" id="flexRadioDefault1">
+            <label class="form-check-label" for="flexRadioDefault1">
+              Male
+            </label>
           </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" name="usergender" value="Female">
-            <label class="form-check-label" for="inlineCheckbox2">Female</label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="usergender" value="Female" id="flexRadioDefault2"
+              checked>
+            <label class="form-check-label" for="flexRadioDefault2">
+              Female
+            </label>
           </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" name="usergender"
-              value="Rather not say">
-            <label class="form-check-label" for="inlineCheckbox3">Rather not say</label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="usergender" value="Rather not say" id="flexRadioDefault2"
+              checked>
+            <label class="form-check-label" for="flexRadioDefault2">
+              Rather not say
+            </label>
           </div>
-          <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Date of Birth</label>
-            <input type="text" name="userbday" class="form-control" id="datepicker">
-          </div>
+        </div>
+        <div class="mb-3">
+          <label for="datepicker" class="form-label">Date of Birth</label>
+          <input type="date" name="user_dob" class="form-control datepicker" id="datepicker">
         </div>
         <div class="mb-3">
           <label for="exampleFormControlTextarea1" class="form-label">Address</label>
@@ -160,7 +172,6 @@ if (isset($_POST['register'])) {
     </div>
   </div>
 
-
   <script>
     $(document).ready(function () {
       $('#datepicker').datepicker({
@@ -170,8 +181,6 @@ if (isset($_POST['register'])) {
       });
     });
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://unpkg.com/@popperjs/core@2"></script>
   <?php include('includes/footer.html'); ?>
 </body>
 
