@@ -38,13 +38,24 @@ CREATE TABLE product (
     product_name VARCHAR(20) DEFAULT NULL,
     product_quantity DOUBLE DEFAULT NULL,
     product_price DOUBLE DEFAULT NULL,
+    product_desc TEXT,
+    image_details TEXT,
     KEY customer_id (customer_id)
 )  ENGINE=INNODB DEFAULT CHARSET=UTF8;
 
 
-INSERT INTO product (customer_id, product_name, product_quantity, product_price) VALUES
-(1, 'Hotdog', 3, 60),
-(2, 'Fish', 1, 300);
+INSERT INTO product (customer_id, product_name, product_quantity, product_price, product_desc, image_details) VALUES
+(1, 'Hotdog', 3, 60, "Lorem Ipsum is simply dummy text of the printing and typesetting industry.","Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+     Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+     It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets
+     containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+    "https://picsum.photos/200/200"),
+    
+(2, 'Fish', 1, 300, "Lorem Ipsum is simply dummy text of the printing and typesetting industry.","Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+     Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+     It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets
+     containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+    "https://picsum.photos/200/200");
 
 
 CREATE TABLE users (
