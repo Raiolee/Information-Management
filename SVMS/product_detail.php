@@ -21,7 +21,7 @@ if (isset($_GET["product_id"]))
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 
     <!-- Header -->
-  <?php include('header.php'); ?>
+  <?php include('includes/header.php'); ?>
 </head>
 
 <body>
