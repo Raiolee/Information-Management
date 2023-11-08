@@ -8,6 +8,8 @@ if(isset($_SESSION['user'])) {
         header("Location: dashboard_admin.php");
     } elseif($_SESSION['type'] == "Supplier") {
         header("Location: dashboard_supplier.php");
+    } elseif($_SESSION["type"] == "Customer") {
+      header("homepage.php");
     }
     exit;
 }
