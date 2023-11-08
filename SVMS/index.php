@@ -2,61 +2,70 @@
 session_start();
 require_once 'config/connection.php';
 
-error_reporting(E_ERROR | E_PARSE);
-
-if ((!isset($_SESSION['user']) != "") && (isset($_SESSION['type']) == "Admin")) {
-  header("Location: admin_dashboard.php");
-  exit;
-} elseif ((isset($_SESSION["user"]) != "") && (isset($_SESSION["type"]) == "Supplier")) {
-  header("Location: supplier_dashboard.php");
-  exit;
+// Redirect if session is set
+if(isset($_SESSION['user'])) {
+    if($_SESSION['type'] == "Admin") {
+        header("Location: dashboard_admin.php");
+    } elseif($_SESSION['type'] == "Supplier") {
+        header("Location: dashboard_supplier.php");
+    }
+    exit;
 }
 
-$error = false;
-if (isset($_POST['login'])) {
-  $username = test_input($_POST['email']);
-  $password = test_input($_POST['password']);
+function test_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
 }
 
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-  $error = true;
-  $emailError = "Please enter a valid email addres.";
-}
+// Initialize error variables
+$emailError = $passwordError = "";
 
-if (empty($password)) {
-  $error = true;
-  $passwordError = "Please enter your password.";
-}
+if(isset($_POST['login'])) {
+    $email = test_input($_POST['email']);
+    $pass = test_input($_POST['pass']);
 
-if (!$error) {
-  $password = password_hash($password, PASSWORD_DEFAULT);
+    // Prevent SQL injection
+    if(empty($email)) {
+        $error = true;
+        $emailError = "Please enter your email address.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = true;
+        $emailError = "Please enter a valid email address.";
+    }
 
-  $result = mysqli_query($connection, "SELECT user_id, user_email, user_pass, user_type FROM users WHERE user_email = '$email'");
-  $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+    if(empty($pass)) {
+        $error = true;
+        $passwordError = "Please enter your password.";
+    }
 
-  $count = mysqli_num_rows($result); // if username/password is correct it returns must be 1 row
+    // If there's no error, continue to login
+    if(!$error) {
+        $password = $pass;
 
-  if ($count == 1 && $row["user_pass"] == $password && $row['user_type'] == 'admin') {
-    $_SESSION['user'] = $row['user_id'];
-    $_SESSION['type'] = $row['user_type'];
-    header('Location: admin_dashboard.php');
-  } elseif ($count == 1 && $row["user_pass"] == $password && $row['user_type'] == 'supplier') {
-    $_SESSION['user'] = $row['user_id'];
-    $_SESSION['type'] = $row['user_type'];
-    header('Location: supplier_dashboard.php');
-  } else {
-    $errorMessage = "Incorrect Credentials, Try again";
-  }
-}
+        $res = mysqli_query($connection, "SELECT user_id, user_email, user_password, user_type FROM users WHERE user_email='$email'");
+        $row = mysqli_fetch_array($res, MYSQLI_ASSOC);
 
-function test_input($data)
-{
-  $data = trim($data);
-  $data = stripslashes($data);
-  $data = htmlspecialchars($data);
-  return $data;
+        $count = mysqli_num_rows($res);
+
+        if($count == 1 && $row['user_password'] == $password) {
+            $_SESSION['user'] = $row['user_id'];
+            $_SESSION['type'] = $row['user_type'];
+
+            if($row['user_type'] == 'Admin') {
+                header("Location: dashboard_admin.php");
+            } elseif($row['user_type'] == 'Supplier') {
+                header("Location: dashboard_supplier.php");
+            }
+            exit;
+        } else {
+            $errorMSG = "Incorrect Credentials, Try again...";
+        }
+    }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -76,36 +85,38 @@ function test_input($data)
       <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" autocomplete="off" method="POST"
         class="w-25">
         <?php
-        if (isset($errorMessage)) {
+        if (isset($errorMSG)) {
           ?>
           <div class="alert alert-danger d-flex align-items-center" role="alert">
             <i class="bi flex-shrink-0 me-2 bi-exclamation-triangle" role="img" aria-label="Warning:"></i>
             <div>
-              <?php echo $errorMessage; ?>
+              <?php echo $errorMSG; ?>
             </div>
           </div>
 
           <?php
         } ?>
-        <div class="mt-5">
+        <div class="mt-3">
           <h3>Sign in.</h3>
         </div>
-        <div class="mt-3">
+        <div class="mb-3">
           <label for="exampleFormControlInput1" class="form-label"> Email </label>
           <input type="email" name="email" class="form-control" id="exampleFormControlInput1"
-            value="<?php echo $email; ?>">
+            value="<?php echo isset($email) ? $email: ''; ?>">
         </div>
         <span class="text-danger">
-          <?php echo $emailError ?>
+          <?php echo $emailError; ?>
         </span>
         <div class="mb-3">
           <label for="exampleFormControlTextarea1" class="form-label">Password</label>
-          <input type="password" name="password" class="form-control">
+          <input type="password" name="pass" class="form-control">
         </div>
         <span class="text-danger">
-          <?php echo $passwordError ?>
+          <?php echo $passwordError; ?>
         </span>
-        <button type="submit" class="btn btn-primary" name="login">Submit</button>
+        <div class="d-flex mt-3">
+          <button type="submit" class="btn btn-primary" name="login">Submit</button>
+        </div>
       </form>
     </div>
 
