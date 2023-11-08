@@ -1,91 +1,162 @@
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+drop database vendocentral_db;
 
-create database vendocentral_db;
+-- Create a new database
+CREATE DATABASE vendocentral_db;
 
-CREATE TABLE customer (
-    customer_id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    user_id INT(11) NOT NULL,
-    customer_name VARCHAR(20) DEFAULT NULL,
-    customer_mobile VARCHAR(20) NOT NULL,
-    KEY user_id (user_id)
-)  ENGINE=INNODB DEFAULT CHARSET=UTF8;
+-- Use the newly created database
+USE vendocentral_db;
 
-
-INSERT INTO customer (user_id, customer_name, customer_mobile) VALUES
-(1, 'Nath', '09524568137'),
-(2, 'Aljon', '09524568137');
-
-
-CREATE TABLE invoice (
-    invoice_id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    customer_id INT(11) NOT NULL,
-    total_bill DOUBLE DEFAULT NULL,
-    KEY user_id (customer_id)
-)  ENGINE=INNODB DEFAULT CHARSET=UTF8;
-
-
-INSERT INTO invoice (invoice_id, customer_id, total_bill) VALUES
-(1, 1, 250),
-(2, 2, 300);
-
-
-CREATE TABLE product (
-    product_id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    customer_id INT(11) DEFAULT NULL,
-    product_name VARCHAR(20) DEFAULT NULL,
-    product_quantity DOUBLE DEFAULT NULL,
-    product_price DOUBLE DEFAULT NULL,
-    product_desc TEXT,
-    image_details TEXT,
-    KEY customer_id (customer_id)
-)  ENGINE=INNODB DEFAULT CHARSET=UTF8;
-
-
-INSERT INTO product (customer_id, product_name, product_quantity, product_price, product_desc, image_details) VALUES
-(1, 'Hotdog', 3, 60, "Lorem Ipsum is simply dummy text of the printing and typesetting industry.","Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-     Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-     It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets
-     containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    "https://picsum.photos/200/200"),
-    
-(2, 'Fish', 1, 300, "Lorem Ipsum is simply dummy text of the printing and typesetting industry.","Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-     Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-     It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets
-     containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    "https://picsum.photos/200/200");
-
-
+-- Create a 'users' table
 CREATE TABLE users (
-    user_id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    user_email VARCHAR(30) NOT NULL,
-    user_pass VARCHAR(30) NOT NULL,
-    user_first VARCHAR(30) NOT NULL,
-    user_last VARCHAR(30) NOT NULL,
-    user_mobile VARCHAR(30) NOT NULL,
-    user_gender VARCHAR(30) NOT NULL,
+    user_id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    user_email VARCHAR(30) UNIQUE NOT NULL,
+    user_password VARCHAR(255) NOT NULL,
+    user_fname VARCHAR(30) NOT NULL,
+    user_lname VARCHAR(30) NOT NULL,
+    user_mobile VARCHAR(15) NOT NULL,
+    user_gender ENUM('Male', 'Female', 'Other') NOT NULL,
     user_dob DATE NOT NULL,
     user_address TEXT NOT NULL,
     user_path TEXT NOT NULL,
-    user_type VARCHAR(30) NOT NULL,
-    user_role VARCHAR(30) NOT NULL
-)  ENGINE=INNODB DEFAULT CHARSET=UTF8;
+    user_type ENUM('Admin', 'Supplier', 'Customer') NOT NULL,
+    user_status ENUM('Active', 'Inactive') NOT NULL
+);
 
-INSERT INTO users (user_email, user_pass, user_first, user_last, user_mobile, user_gender, user_dob, user_address, user_path, user_type, user_role) VALUES
-('noerailey23@gmail.com', 'admin123', 'Noe Railey', 'Viernza', '09951237895', 'Male', '2004-08-23', 'Somewhere down the road', 'images/pic.jpg', 'Admin', 'Active'),
-('felicianoec05@gmail.com', 'supplier123', 'Edward', 'Feliciano', '09951237895', 'Male', '2003-05-02', 'Calamba', 'images/Cat Pics/PXL_20230506_121406818(2).jpg', 'Supplier', 'Active');
+-- Insert users data
+insert into users (user_email, user_password, user_fname, user_lname, user_mobile, user_gender, user_dob, user_address, user_path, user_type, user_status) values
+('noerailey23@gmail.com', 'admin123', 'Noe Railey', 'Vierneza', '09983228946', 'Male', '2004-08-23', 'Santa Rosa', 'images/', 'Admin', 'Active'),
+('felicianoec05@gmail.com', 'supplier123', 'Edward', 'Feliciano', '092345678912', 'Male', '2003-06-12', 'Calamba', 'images/', 'Supplier', 'Active')
+;
 
-ALTER TABLE customer
-  ADD CONSTRAINT customer FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE;
-  
-  ALTER TABLE invoice
-  ADD CONSTRAINT invoice FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON DELETE CASCADE ON UPDATE CASCADE;
-  
-  ALTER TABLE product
-  ADD CONSTRAINT product FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON DELETE CASCADE ON UPDATE CASCADE;
-  
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- Create an 'admin' table
+CREATE TABLE admin (
+    admin_id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    admin_email VARCHAR(30) UNIQUE NOT NULL,
+    admin_password VARCHAR(255) NOT NULL,
+    admin_fname VARCHAR(30) NOT NULL,
+    admin_lname VARCHAR(30) NOT NULL,
+    admin_mobile VARCHAR(15) NOT NULL,
+    admin_gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    admin_dob DATE NOT NULL,
+    admin_address TEXT NOT NULL,
+    admin_path TEXT NOT NULL,
+    admin_status ENUM('Active', 'Inactive') NOT NULL,
+    FOREIGN KEY (admin_id)
+        REFERENCES users (user_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- Insert admin data
+INSERT INTO admin (admin_id, admin_email, admin_password, admin_fname, admin_lname, admin_mobile, admin_gender, admin_dob, admin_address, admin_path, admin_status)
+VALUES
+    (1, 'noerailey23@gmail.com', 'admin123', 'Noe Railey', 'Vierneza', '09951237895', 'Male', '2004-08-23', 'Somewhere down the road', 'images', 'Active'),
+    (2, 'felicianoec05@gmail.com', 'supplier123', 'Edward', 'Feliciano', '09951237895', 'Male', '2003-05-02', 'Calamba', 'images/', 'Active');
+
+-- Create a 'supplier' table
+CREATE TABLE supplier (
+    supplier_id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    supplier_email VARCHAR(30) UNIQUE NOT NULL,
+    supplier_password VARCHAR(255) NOT NULL,
+    supplier_fname VARCHAR(30) NOT NULL,
+    supplier_lname VARCHAR(30) NOT NULL,
+    supplier_mobile VARCHAR(15) NOT NULL,
+    supplier_gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    supplier_dob DATE NOT NULL,
+    supplier_address TEXT NOT NULL,
+    supplier_path TEXT NOT NULL,
+    supplier_terms TEXT NOT NULL,
+    supplier_status ENUM('Active', 'Inactive') NOT NULL,
+    FOREIGN KEY (supplier_id)
+        REFERENCES users (user_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- Insert supplier data
+INSERT INTO supplier (supplier_id, supplier_email, supplier_password, supplier_fname, supplier_lname, supplier_mobile, supplier_gender, supplier_dob, supplier_address, supplier_path, supplier_terms, supplier_status)
+VALUES
+    (1, 'noerailey23@gmail.com', 'supplier123', 'Noe Railey', 'Vierneza', '09951237895', 'Male', '2004-08-23', 'Somewhere down the road', 'images/', 'terms/' 'Active'),
+    (2, 'felicianoec05@gmail.com', 'supplier123', 'Edward', 'Feliciano', '09951237895', 'Male', '2003-05-02', 'Calamba', 'images/', 'terms/' 'Active');
+    
+-- Create a 'supplier_performance' table
+CREATE TABLE supplier_performance (
+    supplier_id INT(11) NOT NULL,
+    delivery_time INT(11) NOT NULL,
+    product_quality_rating DECIMAL(3 , 2 ) NOT NULL,
+    PRIMARY KEY (supplier_id),
+    FOREIGN KEY (supplier_id)
+        REFERENCES supplier (supplier_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- Insert supplier_performance data
+INSERT INTO supplier_performance (supplier_id, delivery_time, product_quality_rating)
+VALUES
+    (1, 2, 4.5),
+    (2, 3, 4.2);
+
+
+-- Create a 'customer' table
+CREATE TABLE customer (
+    customer_id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) NOT NULL,
+    customer_name VARCHAR(50) NOT NULL,
+    customer_mobile VARCHAR(15) NOT NULL,
+    customer_address TEXT NOT NULL,
+    FOREIGN KEY (user_id)
+        REFERENCES users (user_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- Insert customer data
+INSERT INTO customer (user_id, customer_name, customer_mobile, customer_address)
+VALUES
+    (1, 'Nath', '09524568137', 'Santa Rosa'),
+    (2, 'Aljon', '09524568137', 'Philippines');
+
+-- Create a 'product' table
+CREATE TABLE product (
+    product_id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    product_name VARCHAR(50) NOT NULL,
+    product_quantity INT(11) NOT NULL,
+    product_price DECIMAL(10 , 2 ) NOT NULL
+);
+
+-- Insert product data
+INSERT INTO product (product_name, product_quantity, product_price)
+VALUES
+    ('Hotdog', 3, 60.00),
+    ('Fish', 1, 300.00);
+
+-- Create a 'cart' table
+CREATE TABLE cart (
+    cart_id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT(11) NOT NULL,
+    product_id INT(11) NOT NULL,
+    quantity INT(11) NOT NULL,
+    total_amount DECIMAL(10 , 2 ) NOT NULL,
+    product_path VARCHAR(255) NOT NULL,
+    FOREIGN KEY (customer_id)
+        REFERENCES customer (customer_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (product_id)
+        REFERENCES product (product_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- Insert cart data
+INSERT INTO cart (customer_id, product_id, quantity, total_amount, product_path)
+VALUES
+    (1, 1, 3, 180.00, 'productimages/');
+
+-- Create an 'invoice' table
+CREATE TABLE invoice (
+    invoice_id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT(11) NOT NULL,
+    total_bill DECIMAL(10 , 2 ) NOT NULL,
+    FOREIGN KEY (customer_id)
+        REFERENCES customer (customer_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- Insert invoice data
+INSERT INTO invoice (customer_id, total_bill)
+VALUES
+    (1, 250.00),
+    (2, 300.00);
