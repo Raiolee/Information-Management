@@ -2,7 +2,7 @@
 session_start();
 require_once 'config/connection.php';
 
-$getname = mysqli_query($connection, "SELECT CONCAT(user_first, ' ', user_last) AS full_name FROM users;");
+$getname = mysqli_query($connection, "SELECT CONCAT(user_fname, ' ', user_lname) AS full_name FROM users;");
 $row = mysqli_fetch_assoc($getname);
 $full_name = $row['full_name'];
 
@@ -10,11 +10,11 @@ if ($_SESSION['type'] != "Admin") {
     unset($_SESSION['user']);
     session_unset();
     session_destroy();
-    header("Location: login.php");
+    header("Location: index.php");
     exit;
 }
 
-$query = mysqli_query($connection,"SELECT * FROM users WHERE user_id=".$_GET['id']);
+$query = mysqli_query($connection, "SELECT * FROM users WHERE user_id=" . $_GET['id']);
 $getquery = mysqli_fetch_array($query, MYSQLI_ASSOC);
 
 if (isset($_POST['update'])) {
@@ -40,25 +40,25 @@ if (isset($_POST['update'])) {
 // Delete admin query
 if ($_GET['action'] && $_GET['id']) {
     if ($_GET['action'] == 'Delete') {
-  
-  
-      $del = "DELETE  FROM users WHERE user_id=" . $_GET['id'];
-  
-      if (mysqli_query($connection, $del)) {
-  
+
+
+        $del = "DELETE  FROM users WHERE user_id=" . $_GET['id'];
+
+        if (mysqli_query($connection, $del)) {
+
+            ?>
+            <script>alert('successfully Deleted ');</script>
+            <?php
+        } else {
+            ?>
+            <script>alert('error while Deleting! ...');</script>
+        <?php //header("Location: supplier_information.php"); ?>
+        <?php
+        }
         ?>
-        <script>alert('successfully Deleted ');</script>
-      <?php
-      } else {
-        ?>
-        <script>alert('error while Deleting! ...');</script>
-      <?php //header("Location: supplier_information.php"); ?>
-      <?php
-      }
-      ?>
-      <?php header("Location: admin_config.php");
+        <?php header("Location: admin_config.php");
     }
-  }
+}
 ?>
 
 <!DOCTYPE html>
@@ -93,15 +93,15 @@ if ($_GET['action'] && $_GET['id']) {
                                 class="text-decoration-none text-light">Dashboard</a></li>
                         <li class="m-4"><a href="admin_config.php" class="text-decoration-none text-light">Admins</a>
                         </li>
-                        <li class="m-4"><a href="supplier_details.php" class="text-decoration-none text-light">Supplier
-                                Details</a></li>
+                        <li class="m-4"><a href="admin_supplier_config.php"
+                                class="text-decoration-none text-light">Suppliers</a></li>
                     </ul>
                 </div>
             </div>
 
             <!-- Navigation bar -->
             <div class="col-10 d-flex flex-column">
-                <?php include('includes/header3.html'); ?>
+                <?php include('includes/header.php'); ?>
                 <div class="container mt-3">
                     <h3>Edit Admin Details</h3>
                     <form action="admin_config.php" method="post" enctype="multipart/form-data">
@@ -109,27 +109,27 @@ if ($_GET['action'] && $_GET['id']) {
                             <div class="col-md-3 mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" name="email"
-                                    value="<?php echo $getquery['user_email']; ?>" required>
+                                    value="<?php echo $getquery['user_email']; ?>">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="password" name="pass"
-                                    value="<?php echo $getquery['user_pass']; ?>" required>
+                                    value="<?php echo $getquery['user_password']; ?>">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="fname" class="form-label">First Name</label>
                                 <input type="text" class="form-control" id="fname" name="fname"
-                                    value="<?php echo $getquery['user_first']; ?>" required>
+                                    value="<?php echo $getquery['user_fname']; ?>">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="lname" class="form-label">Last Name</label>
                                 <input type="text" class="form-control" id="lname" name="name"
-                                    value="<?php echo $getquery['user_last']; ?>" required>
+                                    value="<?php echo $getquery['user_lname']; ?>">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="number" class="form-label">Mobile Number</label>
                                 <input type="text" class="form-control" id="number" name="number"
-                                    value="<?php echo $getquery['user_mobile']; ?>" required>
+                                    value="<?php echo $getquery['user_mobile']; ?>">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Gender</label>
@@ -170,12 +170,12 @@ if ($_GET['action'] && $_GET['id']) {
                                 <label for="userStatus" class="form-label">Admin Status</label>
                                 <div class="form-check">
                                     <label for="adminstatus" class="form-label">Active</label>
-                                    <input class="form-check-input" type="radio" name="userrole" value="Active" <?php if ($getquery['user_role'] == 'Active')
+                                    <input class="form-check-input" type="radio" name="user_status" value="Active" <?php if ($getquery['user_status'] == 'Active')
                                         echo 'checked="checked"'; ?>>
                                 </div>
                                 <div class="form-check">
                                     <label for="userStatus" class="form-label">Inactive</label>
-                                    <input class="form-check-input" type="radio" name="userrole" value="Inactive" <?php if ($getquery['user_role'] == 'Inactive')
+                                    <input class="form-check-input" type="radio" name="user_status" value="Inactive" <?php if ($getquery['user_status'] == 'Inactive')
                                         echo 'checked="checked"'; ?>>
                                 </div>
                             </div>
