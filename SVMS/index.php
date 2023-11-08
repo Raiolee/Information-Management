@@ -21,7 +21,7 @@ function test_input($data) {
 
 // Initialize error variables
 $error = false;
-$emailError = $passwordError = "";
+
 
 if(isset($_POST['login'])) {
     $email = test_input($_POST['email']);
@@ -88,10 +88,10 @@ if(isset($_POST['login'])) {
         <?php
         if (isset($errorMSG)) {
           ?>
-          <div class="alert alert-danger d-flex align-items-center" role="alert">
+          <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
             <i class="bi flex-shrink-0 me-2 bi-exclamation-triangle" role="img" aria-label="Warning:"></i>
             <div>
-              <?php echo $errorMSG; ?>
+              <?php echo isset($errorMSG) ? $errorMSG: ''; ?>
             </div>
           </div>
 
@@ -106,14 +106,14 @@ if(isset($_POST['login'])) {
             value="<?php echo isset($email) ? $email: ''; ?>">
         </div>
         <span class="text-danger">
-          <?php echo $emailError; ?>
+          <?php echo isset($emailError) ? $emailError: ''; ?>
         </span>
         <div class="mb-3">
           <label for="exampleFormControlTextarea1" class="form-label">Password</label>
           <input type="password" name="pass" class="form-control">
         </div>
         <span class="text-danger">
-          <?php echo $passwordError; ?>
+          <?php echo isset($passwordError) ? $passwordError: ''; ?>
         </span>
         <div class="d-flex mt-3">
           <button type="submit" class="btn btn-primary" name="login">Submit</button>
