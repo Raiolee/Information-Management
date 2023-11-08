@@ -20,6 +20,7 @@ function test_input($data) {
 }
 
 // Initialize error variables
+$error = false;
 $emailError = $passwordError = "";
 
 if(isset($_POST['login'])) {
