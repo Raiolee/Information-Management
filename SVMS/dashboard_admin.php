@@ -2,11 +2,11 @@
 session_start();
 require_once 'config/connection.php';
 
-$getname = mysqli_query($connection, "SELECT CONCAT(user_first, ' ', user_last) AS full_name FROM users;");
+$getname = mysqli_query($connection, "SELECT CONCAT(user_fname, ' ', user_lname) AS full_name FROM users;");
 $row = mysqli_fetch_assoc($getname);
 $full_name = $row['full_name'];
 
-$getimage = mysqli_query($connection,"SELECT user_path FROM users");
+$getimage = mysqli_query($connection, "SELECT user_path FROM users");
 $userRow = mysqli_fetch_assoc($getimage);
 $userimage = $userRow['user_path'];
 
@@ -64,15 +64,15 @@ $customercount = mysqli_num_rows($customertotal);
                                 class="text-decoration-none text-light">Dashboard</a></li>
                         <li class="m-4"><a href="admin_config.php" class="text-decoration-none text-light">Admins</a>
                         </li>
-                        <li class="m-4"><a href="supplier_details.php" class="text-decoration-none text-light">Supplier
-                                Details</a></li>
+                        <li class="m-4"><a href="admin_supplier_config.php"
+                                class="text-decoration-none text-light">Suppliers</a></li>
                     </ul>
                 </div>
             </div>
 
             <!-- Navigation bar -->
             <div class="col-10 d-flex flex-column">
-                <?php include('includes/header3.html'); ?>
+                <?php include('includes/header.php'); ?>
                 <div class="row mt-3">
                     <div class="col-3">
                         <div class="card text-center">
