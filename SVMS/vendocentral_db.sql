@@ -74,8 +74,8 @@ CREATE TABLE supplier (
 -- Insert supplier data
 INSERT INTO supplier (supplier_id, supplier_email, supplier_password, supplier_fname, supplier_lname, supplier_mobile, supplier_gender, supplier_dob, supplier_address, supplier_path, supplier_terms, supplier_status)
 VALUES
-    (1, 'noerailey23@gmail.com', 'supplier123', 'Noe Railey', 'Vierneza', '09951237895', 'Male', '2004-08-23', 'Somewhere down the road', 'images/', 'terms/' 'Active'),
-    (2, 'felicianoec05@gmail.com', 'supplier123', 'Edward', 'Feliciano', '09951237895', 'Male', '2003-05-02', 'Calamba', 'images/', 'terms/' 'Active');
+    (1, 'noerailey23@gmail.com', 'supplier123', 'Noe Railey', 'Vierneza', '09951237895', 'Male', '2004-08-23', 'Somewhere down the road', 'images/', 'terms/', 'Active'),
+    (2, 'felicianoec05@gmail.com', 'supplier123', 'Edward', 'Feliciano', '09951237895', 'Male', '2003-05-02', 'Calamba', 'images/', 'terms/', 'Active');
     
 -- Create a 'supplier_performance' table
 CREATE TABLE supplier_performance (
