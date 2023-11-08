@@ -8,21 +8,22 @@ if ($_SESSION['type'] != "Admin") {
   unset($_SESSION['user']);
   session_unset();
   session_destroy();
-  header("Location: login.php");
+  header("Location: index.php");
   exit;
 }
 
-$getimage = mysqli_query($connection,"SELECT user_path FROM users");
+// Get image path from table
+$getimage = mysqli_query($connection, "SELECT user_path FROM users");
 $userRow = mysqli_fetch_assoc($getimage);
 $userimage = $userRow['user_path'];
 ?>
 
 <!-- get full name query -->
 <?php
-$getname = mysqli_query($connection, "SELECT CONCAT(user_first, ' ', user_last) AS full_name FROM users;");
+$getname = mysqli_query($connection, "SELECT CONCAT(user_fname, ' ', user_lname) AS full_name FROM users;");
 $row = mysqli_fetch_assoc($getname);
 $full_name = $row['full_name'];
- 
+
 
 // Add admin
 if (isset($_POST['update'])) {
@@ -32,19 +33,20 @@ if (isset($_POST['update'])) {
   $isOk = false;
 
   if (!is_dir($target) || !is_writable($target)) {
-    die("Error: Upload directory is not accessible.");
+    echo '<script> ("Error: Upload directory is not accessible."); </script>';
   }
 
   if (file_exists($targetFile)) {
-    die("File Exists");
+    echo '<script> ("File Exists"); </script>';
   }
 
   if (move_uploaded_file($_FILES["images"]["tmp_name"], $targetFile)) {
     $isOk = true;
   }
 
+  // Get the user input data
   $user_email = mysqli_real_escape_string($connection, $_POST['email']);
-  $user_pass = mysqli_real_escape_string($connection, $_POST['pass']);
+  $user_password = mysqli_real_escape_string($connection, $_POST['pass']);
   $user_fname = mysqli_real_escape_string($connection, $_POST['fname']);
   $user_lname = mysqli_real_escape_string($connection, $_POST['lname']);
   $user_mobile = mysqli_real_escape_string($connection, $_POST['number']);
@@ -52,15 +54,15 @@ if (isset($_POST['update'])) {
   $user_dob = $_POST['bday'];
   $user_address = mysqli_real_escape_string($connection, $_POST['address']);
   $user_type = "Admin";
-  $user_role = "Active";
+  $user_status = "Active";
 
+  // SQL query to insert into table
   if ($isOk) {
-    $sql = "INSERT INTO users (user_email, user_pass, user_first, user_last, user_mobile, user_gender, user_dob, user_address, user_path, user_type, user_role)VALUES('$user_email','$user_pass','$user_fname','$user_lname','$user_mobile','$user_gender','$user_dob','$user_address','{$targetFile}','$user_type','$user_role')";
+    $sql = "INSERT INTO users (user_email, user_password, user_fname, user_lname, user_mobile, user_gender, user_dob, user_address, user_path, user_type, user_status)VALUES('$user_email','$user_password','$user_fname','$user_lname','$user_mobile','$user_gender','$user_dob','$user_address','{$targetFile}','$user_type','$user_status')";
 
   }
 
-  
-
+  // Error handling
   if (mysqli_query($connection, $sql)) {
 
     ?>
@@ -105,15 +107,15 @@ if (isset($_POST['update'])) {
           <ul class="list-unstyled">
             <li class="m-4"><a href="dashboard_admin.php" class="text-decoration-none text-light">Dashboard</a></li>
             <li class="m-4"><a href="admin_config.php" class="text-decoration-none text-light">Admins</a></li>
-            <li class="m-4"><a href="supplier_details.php" class="text-decoration-none text-light">Supplier
-                Details</a></li>
+            <li class="m-4"><a href="admin_supplier_config.php" class="text-decoration-none text-light">Suppliers</a>
+            </li>
           </ul>
         </div>
       </div>
 
       <!-- Header -->
       <div class="col-10">
-        <?php include('includes/header3.html'); ?>
+        <?php include('includes/header.php'); ?>
         <!-- Main Contents -->
         <!-- Add New Admin Form -->
         <div class="container mt-3">
@@ -151,9 +153,9 @@ if (isset($_POST['update'])) {
                   <label class="form-check-label" for="genderFemale">Female</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="gender" value="Rather not say" id="genderOther"
+                  <input class="form-check-input" type="radio" name="gender" value="Other" id="genderOther"
                     checked>
-                  <label class="form-check-label" for="genderOther">Rather not say</label>
+                  <label class="form-check-label" for="genderOther">Other</label>
                 </div>
               </div>
               <div class="col-md-3 mb-3">
@@ -208,21 +210,21 @@ if (isset($_POST['update'])) {
                         <?php echo $userRow['user_email']; ?>
                       </td>
                       <td>
-                        <?php echo $userRow['user_first']; ?>
+                        <?php echo $userRow['user_fname']; ?>
                       </td>
                       <td>
-                        <?php echo $userRow['user_last']; ?>
+                        <?php echo $userRow['user_lname']; ?>
                       </td>
                       <td>
                         <?php echo $userRow['user_mobile']; ?>
                       </td>
                       <td>
-                        <?php echo $userRow['user_role']; ?>
+                        <?php echo $userRow['user_status']; ?>
                       </td>
                       <td><img src="<?php echo $userRow['user_path']; ?>" width="55" height="50"></td>
                       <td><input type="submit" class="btn btn-secondary" name="action" value="Edit"></td>
                       <td><input type="submit" class="btn btn-secondary" name="action" value="Delete"></td>
-                      <td><input type="hidden" name="id" value="<?php echo $userRow['user_id']; ?>"/></td>
+                      <td><input type="hidden" name="id" value="<?php echo $userRow['user_id']; ?>" /></td>
                     </tr>
                   </form>
                 <?php } ?>
@@ -234,6 +236,7 @@ if (isset($_POST['update'])) {
     </div>
   </div>
 
+  <!-- Error alerts -->
   <?php if (isset($successMessage)): ?>
     <div class="alert alert-success position-fixed top-0 start-50 translate-middle-x">
       <?php echo $successMessage; ?>
