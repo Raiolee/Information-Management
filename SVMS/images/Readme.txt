@@ -1,1 +1,0 @@
-this is where the images will go the path is images/

@@ -1,5 +1,0 @@
-1. User Management: [log in(done)], [procurement], [inventory management], [admin management(done)]
-2. Supplier Management: [database of suppliers: [contact details, terms, performance metrics]], [Update supplier information], [Remove or deactivate suppliers that are no longer in use]
-3. Supplier Management: [Addition of products to the inventory with details like name, SKU, description, and unit price], [update product information, including price and stock levels], 
-[Delete products that are no longer available]
-4. Purchase Order Creation: [Generate purchase orders for required items, specifying the supplier, quantity, and delivery details], [Edit or cancel purchase orders when necessary.]
